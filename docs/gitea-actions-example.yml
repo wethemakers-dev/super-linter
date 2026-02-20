@@ -1,0 +1,33 @@
+# Example Gitea Actions workflow for Super-linter
+#
+# Copy this file to .gitea/workflows/lint.yml in your repository.
+# Replace your-gitea.example.com with your Gitea instance URL.
+#
+# Gitea Actions is compatible with GitHub Actions workflows. See
+# https://docs.gitea.com/usage/actions/ for more information.
+#
+# Note: Gitea does not support `permissions` or `concurrency`; omit them.
+---
+name: Lint
+
+on:
+  push: null
+  pull_request: null
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: https://github.com/actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Super-linter
+        uses: https://github.com/super-linter/super-linter@v8.5.0
+        env:
+          GITHUB_CUSTOM_API_URL: "https://your-gitea.example.com/api/v1"
+          GITHUB_CUSTOM_SERVER_URL: "https://your-gitea.example.com"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

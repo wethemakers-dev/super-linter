@@ -142,6 +142,21 @@ CallGitHubApi() {
 
   debug "Calling GitHub API (${GITHUB_URL}) with payloaad: ${PAYLOAD}"
 
+  # Use GitHub-specific headers only when calling GitHub's API. Gitea and other
+  # forges (e.g. GitHub Enterprise) may reject or not support X-GitHub-Api-Version.
+  local CURL_HEADERS=(
+    -H "authorization: Bearer ${GITHUB_TOKEN}"
+    -H "content-type: application/json"
+  )
+  if [[ "${GITHUB_API_URL:-}" == *"api.github.com"* ]]; then
+    CURL_HEADERS+=(
+      -H "accept: application/vnd.github+json"
+      -H "X-GitHub-Api-Version: 2022-11-28"
+    )
+  else
+    CURL_HEADERS+=(-H "accept: application/json")
+  fi
+
   if ! CALL_GITHUB_API_OUT=$(
     curl \
       --fail \
@@ -150,10 +165,7 @@ CallGitHubApi() {
       --show-error \
       --silent \
       --url "${GITHUB_URL}" \
-      -H "accept: application/vnd.github+json" \
-      -H "authorization: Bearer ${GITHUB_TOKEN}" \
-      -H "content-type: application/json" \
-      -H "X-GitHub-Api-Version: 2022-11-28" \
+      "${CURL_HEADERS[@]}" \
       -d "${PAYLOAD}" 2>&1
   ); then
     warn "Failed to call GitHub API (${GITHUB_URL}): ${CALL_GITHUB_API_OUT}"

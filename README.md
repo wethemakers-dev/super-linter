@@ -825,7 +825,8 @@ GitHub event that triggered the issue.
 ## Run Super-Linter outside GitHub Actions
 
 You don't need GitHub Actions to run super-linter. It supports several runtime
-environments.
+environments, including [GitLab](docs/run-linter-locally.md#gitlab),
+[Gitea Actions](docs/run-linter-locally.md#gitea-actions), and local Docker.
 
 ### Run using a container runtime engine
 

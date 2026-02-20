@@ -113,6 +113,42 @@ super-linter:
 
 Note that this is a high-level example that you should customize for your needs.
 
+### Gitea Actions
+
+To run Super-linter in your [Gitea Actions](https://docs.gitea.com/usage/actions/)
+workflow, create a workflow file (e.g. `.gitea/workflows/lint.yml`) with the
+following content:
+
+```yaml
+name: Lint
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: https://github.com/actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Super-linter
+        uses: https://github.com/super-linter/super-linter@v8.5.0
+        env:
+          GITHUB_CUSTOM_API_URL: "https://your-gitea.example.com/api/v1"
+          GITHUB_CUSTOM_SERVER_URL: "https://your-gitea.example.com"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Replace `your-gitea.example.com` with your Gitea instance URL. These
+environment variables are required for status checks and pull request summary
+comments to work correctly. For a complete example, see
+[gitea-actions-example.yml](gitea-actions-example.yml).
+
+Note that Gitea Actions does not support `permissions` or `concurrency` in
+workflow files; omit them or they will be ignored.
+
 ### Run on Codespaces and Visual Studio Code
 
 This repository provides a DevContainer for
